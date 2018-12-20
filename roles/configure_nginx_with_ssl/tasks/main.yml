@@ -1,0 +1,39 @@
+---
+# tasks file for configure_nginx_with_ssl
+
+- copy:
+    src: /home/sindhu/secure-webserver/sindhu/files/self-signed.conf
+    dest: /etc/nginx/snippets/self-signed.conf
+    owner: root
+    group: root
+    mode: 0644
+     
+- copy:
+    src: /home/sindhu/secure-webserver/sindhu/files/ssl-params.conf
+    dest: /etc/nginx/snippets/ssl-params.conf
+    owner: root
+    group: root
+    mode: 0644
+     
+- copy:
+    src: /home/sindhu/secure-webserver/sindhu/files/google.com
+    dest: /etc/nginx/sites-enabled/google.com
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Adjust nginx setting before restarting
+  lineinfile: dest=/etc/nginx/nginx.conf
+    regexp="# server_names_hash_bucket_size;" 
+    insertafter="server_names_hash_bucket_size" 
+    line="        server_names_hash_bucket_size 512;"
+    state=present
+     
+- name: Restart nginx
+  service:
+    name: nginx
+    state: restarted
+     
+- wait_for:
+    port: 443
+

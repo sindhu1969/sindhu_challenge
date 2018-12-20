@@ -1,0 +1,37 @@
+---
+# tasks file for create_n_deploy_ssl_certificate
+
+- name: Update repository cache and install Nginx Package.
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - curl
+    - nginx
+    - openssl
+    - python-openssl
+     
+- name: Generate an OpenSSL private key
+  openssl_privatekey:
+    path: /etc/ssl/private/ansible.com.pem
+
+- name: Create directory
+  file:
+    path: /etc/ssl/csr
+    state: directory
+    mode: 0755
+     
+- name: Generate an OpenSSL Certificate Signing Request
+  openssl_csr:
+    path: /etc/ssl/csr/www.ansible.com.csr
+    privatekey_path: /etc/ssl/private/ansible.com.pem
+    commonName: www.ansible.com
+     
+- name: Generate a self signed certificate
+  openssl_certificate:
+    path: /etc/ssl/certs/nginx-selfsigned.crt
+    privatekey_path: /etc/ssl/private/ansible.com.pem
+    csr_path: /etc/ssl/csr/www.ansible.com.csr
+    provider: selfsigned
+

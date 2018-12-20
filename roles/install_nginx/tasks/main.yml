@@ -1,0 +1,31 @@
+---
+# tasks file for install_n_configure_nginx
+
+- name: Update repository cache and install Nginx Package.
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - nginx
+
+- name: Allow Nginx Full
+  ufw:
+    rule: allow
+    name: Nginx Full
+    state: enabled
+ 
+- name: Allow Nginx Full
+  ufw:
+    rule: allow
+    name: OpenSSH
+    state: enabled
+ 
+- name: Start nginx
+  service:
+    name: nginx
+    state: started
+
+- wait_for:
+  port: 80 
+
