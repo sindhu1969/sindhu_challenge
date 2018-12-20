@@ -9,6 +9,20 @@
   with_items:
     - nginx
 
+- name: create index.html
+  blockinfile: 
+    path: /var/www/html/index.html
+    block: |
+        <html>
+        <head>
+        <title>Hello World</title>
+        </head>
+        <body>
+        <h1>Hello World!<h1>
+        </body>
+        </html>
+
+
 - name: Allow Nginx Full
   ufw:
     rule: allow
